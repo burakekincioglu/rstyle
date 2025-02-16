@@ -5,6 +5,7 @@ import DoubleTapLikeGesture from './Screens/DoubleTapLikeGesture';
 import ExploreInterpolate from './Screens/ExploreInterpolate';
 import HomeScreen from './Screens/Home';
 import Leaderboard from './Screens/Leaderboard';
+import Pagination from './Screens/Pagination';
 import PagingDotsScreen from './Screens/PagingDotsScreen';
 import PangestureGame from './Screens/PangestureGame';
 import Schedule from './Screens/Schedule';
@@ -46,9 +47,12 @@ const App = () => {
         options: {
           headerTransparent: true,
           headerTitle: '',
-          headerBackTitleVisible: false,
+          headerBackTitleVisible: false
         },
       },
+      Pagination: {
+        screen: Pagination
+      }
     },
   });
 

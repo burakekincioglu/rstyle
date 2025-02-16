@@ -6,6 +6,7 @@ export const constants = {
     DoubleTapLikeGesture: 'DoubleTapLikeGesture',
     PangestureGame: 'PangestureGame',
     Schedule: 'Schedule',
-    Leaderboard: 'Leaderboard'
+    Leaderboard: 'Leaderboard',
+    Pagination: 'Pagination'
   }
 }
