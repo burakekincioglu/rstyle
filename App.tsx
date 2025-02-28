@@ -1,6 +1,7 @@
 import { createStaticNavigation } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import CircularCarousel from './Screens/CircularCarousel';
 import DoubleTapLikeGesture from './Screens/DoubleTapLikeGesture';
 import ExploreInterpolate from './Screens/ExploreInterpolate';
 import HomeScreen from './Screens/Home';
@@ -52,6 +53,13 @@ const App = () => {
       },
       Pagination: {
         screen: Pagination
+      },
+      CircularCarousel: {
+        screen: CircularCarousel,
+        options: {
+          headerTransparent: true,
+          title: ''
+        }
       }
     },
   });

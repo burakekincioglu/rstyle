@@ -7,6 +7,7 @@ export const constants = {
     PangestureGame: 'PangestureGame',
     Schedule: 'Schedule',
     Leaderboard: 'Leaderboard',
-    Pagination: 'Pagination'
+    Pagination: 'Pagination',
+    CircularCarousel: 'CircularCarousel'
   }
 }
