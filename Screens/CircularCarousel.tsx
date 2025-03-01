@@ -1,15 +1,17 @@
-import React from 'react'
-import { Dimensions, Image, StatusBar, StyleSheet, View } from 'react-native'
-import Animated, { useAnimatedScrollHandler, useSharedValue } from 'react-native-reanimated'
+import React, { useState } from 'react'
+import { Dimensions, StatusBar, StyleSheet, View } from 'react-native'
+import Animated, { clamp, FadeIn, FadeOut, interpolate, interpolateColor, runOnJS, SharedValue, useAnimatedScrollHandler, useAnimatedStyle, useSharedValue } from 'react-native-reanimated'
 
 type CarouselItemProps = {
   image: string,
-  index: string
+  index: number,
+  scrollX: SharedValue<number>
+  activeIndex: number
 }
 
 
 const {width} = Dimensions.get('screen')
-const _itemSize = width * 0.22
+const _itemSize = width * 0.28
 const _spacing = 16
 const _itemTotalSize = _itemSize + _spacing
 const badge = require('../assets/images/rozet.png')
@@ -24,28 +26,59 @@ const imageUrls = [
 
 
 
-function CarouselItem({image, index}: CarouselItemProps) {
-  return <View style={{width: _itemSize, aspectRatio: 1}} >
-            <Image 
+function CarouselItem({image, index, scrollX, activeIndex}: CarouselItemProps) {
+  const blur = index === activeIndex
+  const _styleR = useAnimatedStyle(() => {
+    return{
+      borderWidth: 4,
+      borderColor: interpolateColor(
+          scrollX.value,
+          [index -1, index, index + 1],
+          ['transparent', 'white', 'transparent']
+      ),
+      borderRadius: _itemSize / 2,
+      transform: [{
+        translateY: interpolate(
+          scrollX.value,[index-1, index, index + 1],
+          [_itemSize/3, 0, _itemSize/3]
+        )
+      }]
+    }
+  })
+  return <Animated.View style={[{width: _itemSize, aspectRatio: 1}, _styleR]} >
+            <Animated.Image 
+              blurRadius={blur ? 0 : 5}
               source={{uri: image}} 
               style={{flex: 1, borderRadius: _itemSize / 2}}
             />
-        </View>
+        </Animated.View>
 }
+
 
 export default function CircularCarousel () {
   const scrollX = useSharedValue(0)
+  const [activeIndex, setActiveIndex] = useState(0)
   const onScroll = useAnimatedScrollHandler({
-    onScroll: (e) => {
-      scrollX.value = e.contentOffset.x
+    onScroll: (e) => {      
+      scrollX.value = e.contentOffset.x / _itemTotalSize   
+      const activeIndexValue = clamp(Math.round(scrollX.value), 0, imageUrls.length -1) 
+
+      // [0, 0.5) -> 0 olacağı için aşağıdaki if'e girmez: performams iyileştirmesi
+      if (activeIndexValue !== activeIndex) {
+        runOnJS(setActiveIndex)(activeIndexValue)
+      }
+      
     }
   })
   return (
-    <View style={{flex: 1}} >
+    <View style={{flex: 1, backgroundColor: 'black'}} >
       <StatusBar barStyle={'light-content'} />
-      <Image 
-      source={{uri: 'https://images.pexels.com/photos/414171/pexels-photo-414171.jpeg'}}
-      style={StyleSheet.absoluteFillObject}
+      <Animated.Image 
+        key={`images-${activeIndex}`}
+        entering={FadeIn.duration(500)}
+        exiting={FadeOut.duration(500)}
+        source={{uri: imageUrls[activeIndex]}}
+        style={StyleSheet.absoluteFillObject}
       />
       <View style={{flex: 1, justifyContent: "flex-end"}} >
         <Animated.FlatList 
@@ -59,11 +92,13 @@ export default function CircularCarousel () {
             gap: _spacing
           }}
           renderItem={({item, index}) => {
-            return <CarouselItem image={item} index={index}/>
+            return <CarouselItem image={item} index={index} activeIndex={activeIndex} scrollX={scrollX} />
           }}
           // pagination animation
           snapToInterval={_itemTotalSize}
           decelerationRate={'fast'}
+          //scrolling
+          onScroll={onScroll}
         />
       </View>      
     </View>
