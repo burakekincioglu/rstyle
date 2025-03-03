@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { Dimensions, StatusBar, StyleSheet, View } from 'react-native'
-import Animated, { clamp, FadeIn, FadeOut, interpolate, interpolateColor, runOnJS, SharedValue, useAnimatedScrollHandler, useAnimatedStyle, useSharedValue } from 'react-native-reanimated'
+import LinearGradient from 'react-native-linear-gradient'
+import Animated, { clamp, FadeIn, FadeInDown, FadeOut, interpolate, interpolateColor, runOnJS, SharedValue, useAnimatedScrollHandler, useAnimatedStyle, useSharedValue } from 'react-native-reanimated'
 
 type CarouselItemProps = {
   image: string,
@@ -73,15 +74,30 @@ export default function CircularCarousel () {
   return (
     <View style={{flex: 1, backgroundColor: 'black'}} >
       <StatusBar barStyle={'light-content'} />
-      <Animated.Image 
-        key={`images-${activeIndex}`}
-        entering={FadeIn.duration(500)}
-        exiting={FadeOut.duration(500)}
-        source={{uri: imageUrls[activeIndex]}}
-        style={StyleSheet.absoluteFillObject}
+      <View style={[StyleSheet.absoluteFillObject]} >
+        <Animated.Image 
+          key={`images-${activeIndex}`}
+          entering={FadeIn.duration(500)}
+          exiting={FadeOut.duration(500)}
+          source={{uri: imageUrls[activeIndex]}}
+          style={{flex: 1}}
+        />
+        <LinearGradient
+        colors={['transparent', '#000']}
+        start={{x: 0, y: 0}}
+        end={{x: 0, y: 1}}
+        style={{height: _itemSize * 4,
+          position: "absolute", 
+          left: 0, 
+          right: 0,
+          bottom: 0
+        }} 
       />
+      </View>
+      
       <View style={{flex: 1, justifyContent: "flex-end"}} >
-        <Animated.FlatList 
+        <Animated.FlatList
+        entering={FadeInDown.damping(40).stiffness(100).duration(500)}
           horizontal
           data={imageUrls}
           showsHorizontalScrollIndicator={false}
