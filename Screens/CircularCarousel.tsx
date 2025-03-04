@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { Dimensions, StatusBar, StyleSheet, View } from 'react-native'
+import React, { useEffect, useState } from 'react'
+import { Dimensions, Image, StatusBar, StyleSheet, View } from 'react-native'
 import LinearGradient from 'react-native-linear-gradient'
 import Animated, { clamp, FadeIn, FadeInDown, FadeOut, interpolate, interpolateColor, runOnJS, SharedValue, useAnimatedScrollHandler, useAnimatedStyle, useSharedValue } from 'react-native-reanimated'
 
@@ -19,7 +19,7 @@ const badge = require('../assets/images/rozet.png')
 const imageUrls = [
   "https://images.pexels.com/photos/414171/pexels-photo-414171.jpeg",
   "https://images.pexels.com/photos/417173/pexels-photo-417173.jpeg",
-  "https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg", // Yeni teknoloji görseli
+  "https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg",
   "https://images.pexels.com/photos/674010/pexels-photo-674010.jpeg",
   "https://images.pexels.com/photos/355770/pexels-photo-355770.jpeg",
   "https://images.pexels.com/photos/34950/pexels-photo.jpg"
@@ -59,6 +59,14 @@ function CarouselItem({image, index, scrollX, activeIndex}: CarouselItemProps) {
 export default function CircularCarousel () {
   const scrollX = useSharedValue(0)
   const [activeIndex, setActiveIndex] = useState(0)
+
+  useEffect(() => {
+    imageUrls.forEach((img) => {
+      Image.prefetch(img);
+    });
+  }, []);
+  
+
   const onScroll = useAnimatedScrollHandler({
     onScroll: (e) => {      
       scrollX.value = e.contentOffset.x / _itemTotalSize   
