@@ -4,10 +4,10 @@ import LinearGradient from 'react-native-linear-gradient'
 import Animated, { clamp, FadeIn, FadeInDown, FadeOut, interpolate, interpolateColor, runOnJS, SharedValue, useAnimatedScrollHandler, useAnimatedStyle, useSharedValue } from 'react-native-reanimated'
 
 type CarouselItemProps = {
-  image: string,
-  index: number,
-  scrollX: SharedValue<number>
-  activeIndex: number
+  image       : string,
+  index       : number,
+  scrollX     : SharedValue<number>
+  activeIndex : number
 }
 
 /*

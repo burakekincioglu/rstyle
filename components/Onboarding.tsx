@@ -15,6 +15,8 @@ const AnimatedPressable = Animated.createAnimatedComponent(Pressable)
 
 const _spacing = spacing.xs
 const _buttonHeight = 42
+const _dotContainer = 24
+const _dotSize = _dotContainer / 3
 const _layoutTransition = LinearTransition.springify().damping(80).stiffness(200)
 
 function Button({children, style, ...rest}: AnimatedProps<PressableProps>) {
@@ -37,6 +39,36 @@ function Button({children, style, ...rest}: AnimatedProps<PressableProps>) {
     )
 }
 
+function Dot() {
+    return(
+        <View 
+            style={{
+                width: _dotSize,
+                height: _dotSize,
+                borderRadius: _dotSize,
+                backgroundColor: '#000'
+            }}
+        />
+    )
+}
+
+export function Pagination({
+    selectedIndex, 
+    total}:
+    {
+    selectedIndex: number;
+    total: number
+    } 
+) {
+    return(
+        <View>
+            {[...Array(total).keys()].map((i) => (
+                <Dot key={`dot - ${i}`} index={i} />
+            ))}
+        </View>
+    )
+}
+
 const Onboarding = ({
     total,
     selectedIndex,
@@ -48,7 +80,7 @@ const Onboarding = ({
 }) => {
   return (
     <View style={{padding: _spacing}} >
-      <Text>Onboarding {selectedIndex}</Text>
+        <Pagination selectedIndex={selectedIndex} total={total} />
       <View style={{flexDirection: "row", gap: _spacing}} >
         {
             selectedIndex > 0 && (
