@@ -10,6 +10,14 @@ type CarouselItemProps = {
   activeIndex: number
 }
 
+/*
+
+- flatlist'den gelen index değerini onScroll içinde "clamp" kullanarak 
+  belli bir aralığa sıkıştırma olayı güzeldi
+- activeIndexValue !== activeIndex eşitlemesi ve runOnJS ile performans iyileştirme güzeldi
+- interpolate kullanımı çok enteresandı
+*/
+
 
 const {width} = Dimensions.get('screen')
 const _itemSize = width * 0.28
