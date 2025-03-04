@@ -23,7 +23,6 @@ const {width} = Dimensions.get('screen')
 const _itemSize = width * 0.28
 const _spacing = 16
 const _itemTotalSize = _itemSize + _spacing
-const badge = require('../assets/images/rozet.png')
 const imageUrls = [
   "https://images.pexels.com/photos/414171/pexels-photo-414171.jpeg",
   "https://images.pexels.com/photos/417173/pexels-photo-417173.jpeg",
