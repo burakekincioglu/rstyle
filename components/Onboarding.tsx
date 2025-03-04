@@ -1,6 +1,6 @@
 import React from 'react';
 import { Pressable, PressableProps, StyleSheet, Text, View } from 'react-native';
-import Animated, { AnimatedProps, FadeInDown, FadeInLeft, FadeOutLeft, FadeOutUp, LinearTransition } from 'react-native-reanimated';
+import Animated, { AnimatedProps, FadeInDown, FadeInLeft, FadeOutLeft, FadeOutUp, interpolateColor, LinearTransition, SharedValue, useAnimatedStyle, useDerivedValue, withSpring } from 'react-native-reanimated';
 import { colors } from '../utils/colors';
 import { spacing } from '../utils/spacing';
 
@@ -18,6 +18,9 @@ const _buttonHeight = 42
 const _dotContainer = 24
 const _dotSize = _dotContainer / 3
 const _layoutTransition = LinearTransition.springify().damping(80).stiffness(200)
+
+const _activeDot = colors.darkgray
+const _inactiveDot = colors.graywhite
 
 function Button({children, style, ...rest}: AnimatedProps<PressableProps>) {
     return(
@@ -39,16 +42,35 @@ function Button({children, style, ...rest}: AnimatedProps<PressableProps>) {
     )
 }
 
-function Dot() {
+function Dot({index, animation}: {index: number, animation: SharedValue<number>}) {
+
+    const rStyle = useAnimatedStyle(() => {
+        return {
+            backgroundColor: interpolateColor(
+                animation.value,
+                [index - 1, index, index + 1],
+                [_inactiveDot, _activeDot, _activeDot]
+            )
+        }
+    })
+
     return(
-        <View 
-            style={{
-                width: _dotSize,
-                height: _dotSize,
-                borderRadius: _dotSize,
-                backgroundColor: '#000'
-            }}
-        />
+        <View style={{
+            width: _dotContainer,
+            height: _dotContainer,
+            justifyContent: 'center',
+            alignItems: 'center'
+        }}>
+            <Animated.View 
+                style={[{
+                    width: _dotSize,
+                    height: _dotSize,
+                    borderRadius: _dotSize,
+                    backgroundColor: '#000'
+                }, rStyle]}
+            />
+        </View>
+        
     )
 }
 
@@ -60,12 +82,45 @@ export function Pagination({
     total: number
     } 
 ) {
+
+    const animation = useDerivedValue(() => {
+        return withSpring(selectedIndex, {
+            damping: 80,
+            stiffness: 200
+        })
+    })
+
     return(
-        <View>
-            {[...Array(total).keys()].map((i) => (
-                <Dot key={`dot - ${i}`} index={i} />
-            ))}
+        <View style={{justifyContent: "center", alignItems: "center"}} >
+            <View style={{flexDirection: 'row'}} >
+                <PaginationIndicator animation={animation} />
+                {[...Array(total).keys()].map((i) => (
+                    <Dot key={`dot - ${i}`} index={i} animation={animation} />
+                ))}
+            </View>
         </View>
+        
+    )
+}
+
+function PaginationIndicator({animation}: {animation: SharedValue<number>}) {
+    const rStyle = useAnimatedStyle(() => {
+        return{
+            width: _dotContainer + _dotContainer * animation.value
+        }
+    })
+    return(
+        <Animated.View 
+            style={[{
+                backgroundColor: colors.success,
+                height: _dotContainer,
+                width: _dotContainer,
+                borderRadius: _dotContainer,
+                position: 'absolute',
+                left: 0,
+                top: 0
+            }, rStyle]}
+        />
     )
 }
 
@@ -79,7 +134,7 @@ const Onboarding = ({
     onIndexChange: (index: number) => void
 }) => {
   return (
-    <View style={{padding: _spacing}} >
+    <View style={{padding: _spacing, gap: _spacing}} >
         <Pagination selectedIndex={selectedIndex} total={total} />
       <View style={{flexDirection: "row", gap: _spacing}} >
         {
@@ -102,12 +157,12 @@ const Onboarding = ({
         <Button 
             style={{backgroundColor: colors.blue, flex: 1}}
             onPress={() => {
-                if (selectedIndex === total) {
+                if (selectedIndex === total -1) {
                     return;
                 }
                 onIndexChange(selectedIndex + 1)
         }} >
-            {selectedIndex === total ?(
+            {selectedIndex === total -1 ?(
                 <Animated.Text
                     key='finish'
                     style={{color: colors.white}}
