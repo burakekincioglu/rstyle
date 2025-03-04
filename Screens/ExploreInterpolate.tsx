@@ -83,7 +83,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     card: {height: 180,
-        aspectRatio: 3 / 4,
+        width: 120,
         backgroundColor: 'white',
         borderRadius: 25,
         shadowColor: '#cccccc',
