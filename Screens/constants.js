@@ -8,6 +8,7 @@ export const constants = {
     Schedule: 'Schedule',
     Leaderboard: 'Leaderboard',
     Pagination: 'Pagination',
-    CircularCarousel: 'CircularCarousel'
+    CircularCarousel: 'CircularCarousel',
+    VoiceRecord: 'VoiceRecord'
   }
 }

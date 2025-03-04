@@ -10,6 +10,7 @@ import Pagination from './Screens/Pagination';
 import PagingDotsScreen from './Screens/PagingDotsScreen';
 import PangestureGame from './Screens/PangestureGame';
 import Schedule from './Screens/Schedule';
+import VoiceRecord from './Screens/VoiceRecord';
 
 const App = () => {
   const RootStack = createStackNavigator({
@@ -60,6 +61,9 @@ const App = () => {
           headerTransparent: true,
           title: ''
         }
+      },
+      VoiceRecord: {
+        screen: VoiceRecord
       }
     },
   });
