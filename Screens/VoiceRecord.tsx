@@ -1,95 +1,89 @@
-import React, { useEffect, useState } from 'react';
-import { Button, Text, View } from 'react-native';
+import React, { useRef, useState } from 'react';
+import { Alert, Button, PermissionsAndroid, Platform, Text, View } from 'react-native';
 import AudioRecorderPlayer from 'react-native-audio-recorder-player';
+import { PERMISSIONS, request, RESULTS } from 'react-native-permissions';
+
+const audioRecorderPlayer = new AudioRecorderPlayer();
 
 const VoiceRecord = () => {
   const [recording, setRecording] = useState(false);
   const [playing, setPlaying] = useState(false);
-  const [recordedUri, setRecordedUri] = useState<string>();
-  const audioRecorderPlayer = new AudioRecorderPlayer();
-  
-  useEffect(() => {
-    if (recording) {
-      (async () => {
-        console.log("Kayıt başlatılıyor...");
-        await audioRecorderPlayer.startRecorder();
-        
-        audioRecorderPlayer.addRecordBackListener((e) => {
-          console.log('Recording: ', e.currentPosition);
-        });
-      })();
+  const [audioPath, setAudioPath] = useState<string | null>(null);
+  const recordRef = useRef<string | null>(null);
+
+  // 📌 Mikrofon izni al
+  const requestPermissions = async () => {
+    if (Platform.OS === 'android') {
+      const granted = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.RECORD_AUDIO);
+      return granted === PermissionsAndroid.RESULTS.GRANTED;
     } else {
-      (async () => {
-        console.log("Kayıt durduruluyor...");
-        audioRecorderPlayer.removeRecordBackListener(); // Önce temizle
-        const result = await audioRecorderPlayer.stopRecorder();
-        setRecordedUri(result);
-      })();
+      const result = await request(PERMISSIONS.IOS.MICROPHONE);
+      return result === RESULTS.GRANTED;
+    }
+  };
+
+  // 🎤 Ses kaydını başlat
+  const startRecording = async () => {
+    const hasPermission = await requestPermissions();
+    if (!hasPermission) {
+      Alert.alert('İzin Gerekli', 'Mikrofon izni verilmelidir.');
+      return;
     }
 
-    return () => {
-      console.log("Listener temizlendi");
-      audioRecorderPlayer.removeRecordBackListener();
-    };
-  }, [recording]);
-  
+    const path = Platform.OS === 'ios' ? 'hello.m4a' : `${Date.now()}.mp3`;
+    recordRef.current = path;
 
-  const onStartRecord = async () => {
-    console.log("geldi mi");
-    
-    const result = await audioRecorderPlayer.startRecorder();
-    audioRecorderPlayer.addRecordBackListener((e) => {
-      console.log('Recording: ', e.currentPosition, recording);
-    });
-    console.log("start",result);
+    try {
+      await audioRecorderPlayer.startRecorder(path);
+      setRecording(true);
+    } catch (error) {
+      console.error('Kayıt başlatılamadı', error);
+    }
   };
 
-  const onStopRecord = async () => {
-    const result = await audioRecorderPlayer.stopRecorder();
-    audioRecorderPlayer.removeRecordBackListener();
-    setRecording(false);
-    setRecordedUri(result);
-    console.log("stop",result);
+  // ⏹ Ses kaydını durdur
+  const stopRecording = async () => {
+    try {
+      const result = await audioRecorderPlayer.stopRecorder();
+      console.log(result);
+      
+      setAudioPath(result);
+      setRecording(false);
+    } catch (error) {
+      console.error('Kayıt durdurulamadı', error);
+    }
   };
 
-  const onStartPlay = async () => {
-    if (recordedUri) {
-      const result = await audioRecorderPlayer.startPlayer(recordedUri);
+  // ▶️ Kaydedilen sesi çal
+  const playRecording = async () => {
+    if (!audioPath) {
+      Alert.alert('Hata', 'Önce bir kayıt yapmalısınız.');
+      return;
+    }
+
+    try {
+      await audioRecorderPlayer.startPlayer(audioPath);
       setPlaying(true);
+
       audioRecorderPlayer.addPlayBackListener((e) => {
-        console.log('Playing: ', e.currentPosition);
         if (e.currentPosition === e.duration) {
-          onStopPlay();
+          setPlaying(false);
+          audioRecorderPlayer.stopPlayer();
         }
       });
-      console.log(result);
+    } catch (error) {
+      console.error('Ses oynatılamadı', error);
     }
-  };
-
-  const onStopPlay = async () => {
-    const result = await audioRecorderPlayer.stopPlayer();
-    setPlaying(false);
-    audioRecorderPlayer.removePlayBackListener();
-    console.log("stop",result);
   };
 
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Button
-        title={'Stop Recording'}
-        onPress={() => {setRecording(false)}}
-      />
-      <Button
-        title={'Start Recording'}
-        onPress={() => {setRecording(true)}}
-      />
-      {recordedUri && (
-        <Button
-          title={playing ? 'Stop Playing' : 'Start Playing'}
-          onPress={playing ? onStopPlay : onStartPlay}
-        />
-      )}
-      {recordedUri && <Text>Recorded File: {recordedUri}</Text>}
+      <Text style={{ fontSize: 18, marginBottom: 10 }}>Ses Kaydedici</Text>
+
+      <Button title={recording ? 'Kaydı Durdur' : 'Kaydı Başlat'} onPress={recording ? stopRecording : startRecording} />
+      <View style={{ height: 20 }} />
+
+      <Button title="Kaydı Oynat" onPress={playRecording} disabled={!audioPath || playing} />
     </View>
   );
 };
