@@ -76,3 +76,5 @@ yarn-error.log
 package-lock.json
 ios/podfile.lock
 ios/rstyle.xcodeproj/*
+ios/rstyle/PrivacyInfo.xcprivacy
+ios/rstyle.xcodeproj/project.pbxproj

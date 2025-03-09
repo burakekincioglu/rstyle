@@ -1,7 +1,10 @@
+import { useNavigation } from '@react-navigation/native';
+import { AudioLines } from 'lucide-react-native';
 import React, { useRef, useState } from 'react';
-import { Alert, Button, PermissionsAndroid, Platform, Text, View } from 'react-native';
+import { Alert, Button, PermissionsAndroid, Platform, Pressable, StyleSheet, View } from 'react-native';
 import AudioRecorderPlayer from 'react-native-audio-recorder-player';
 import { PERMISSIONS, request, RESULTS } from 'react-native-permissions';
+import { colors } from '../utils/colors';
 
 const audioRecorderPlayer = new AudioRecorderPlayer();
 
@@ -10,6 +13,8 @@ const VoiceRecord = () => {
   const [playing, setPlaying] = useState(false);
   const [audioPath, setAudioPath] = useState<string | null>(null);
   const recordRef = useRef<string | null>(null);
+
+  const navigation = useNavigation()
 
   // 📌 Mikrofon izni al
   const requestPermissions = async () => {
@@ -30,7 +35,7 @@ const VoiceRecord = () => {
       return;
     }
 
-    const path = Platform.OS === 'ios' ? 'hello.m4a' : `${Date.now()}.mp3`;
+    const path = Platform.OS === 'ios' ? 'not.m4a' : `not.mp3`;
     recordRef.current = path;
 
     try {
@@ -49,6 +54,9 @@ const VoiceRecord = () => {
       
       setAudioPath(result);
       setRecording(false);
+      if (result) {
+        navigation.navigate('NewRecording', { params: undefined })
+      }
     } catch (error) {
       console.error('Kayıt durdurulamadı', error);
     }
@@ -77,15 +85,27 @@ const VoiceRecord = () => {
   };
 
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text style={{ fontSize: 18, marginBottom: 10 }}>Ses Kaydedici</Text>
-
-      <Button title={recording ? 'Kaydı Durdur' : 'Kaydı Başlat'} onPress={recording ? stopRecording : startRecording} />
-      <View style={{ height: 20 }} />
-
-      <Button title="Kaydı Oynat" onPress={playRecording} disabled={!audioPath || playing} />
+    <View style={style.container}>
+      <Button color={colors.white} title="Kaydı Oynat" onPress={playRecording} disabled={!audioPath || playing} />
+      <Pressable style={style.voiceContainer} onPress={recording ? stopRecording : startRecording} >
+        <AudioLines size={40} color={recording ? colors.blue : colors.darkgray} />
+      </Pressable>
     </View>
   );
 };
 
 export default VoiceRecord;
+
+const style = StyleSheet.create({
+  container: { flex: 1, backgroundColor: colors.darkgray, },
+  voiceContainer: {backgroundColor: colors.white, 
+                   width: 80, 
+                   height: 80, 
+                   borderRadius: 40,
+                   justifyContent: "center",
+                   alignItems: "center",
+                   position: "absolute",
+                   alignSelf: "center",
+                   bottom: 100
+                  }
+})
