@@ -1,10 +1,14 @@
 import { useNavigation } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
 import { AudioLines } from 'lucide-react-native';
 import React, { useRef, useState } from 'react';
 import { Alert, Button, PermissionsAndroid, Platform, Pressable, StyleSheet, View } from 'react-native';
 import AudioRecorderPlayer from 'react-native-audio-recorder-player';
 import { PERMISSIONS, request, RESULTS } from 'react-native-permissions';
+import { AppStackParamList } from '../AppNavigator';
 import { colors } from '../utils/colors';
+import { navigate } from '../utils/navigate';
+
 
 const audioRecorderPlayer = new AudioRecorderPlayer();
 
@@ -14,7 +18,7 @@ const VoiceRecord = () => {
   const [audioPath, setAudioPath] = useState<string | null>(null);
   const recordRef = useRef<string | null>(null);
 
-  const navigation = useNavigation()
+  const navigation = useNavigation<StackNavigationProp<AppStackParamList>>();
 
   // 📌 Mikrofon izni al
   const requestPermissions = async () => {
@@ -55,7 +59,9 @@ const VoiceRecord = () => {
       setAudioPath(result);
       setRecording(false);
       if (result) {
-        navigation.navigate('NewRecording', { params: undefined })
+        //  navigate({ name: 'NewRecording', params: undefined })
+        //  navigation.navigate('NewRecording', {params: undefined})
+        navigate({name: 'NewRecording', params: { uri: result}})
       }
     } catch (error) {
       console.error('Kayıt durdurulamadı', error);

@@ -1,6 +1,5 @@
 import { createNavigationContainerRef, NavigationContainer, ParamListBase } from '@react-navigation/native';
 import { createStackNavigator, type StackScreenProps } from '@react-navigation/stack';
-import { SidebarClose } from 'lucide-react-native';
 import React, { useRef } from 'react';
 import CircularCarousel from './Screens/CircularCarousel';
 import DoubleTapLikeGesture from './Screens/DoubleTapLikeGesture';
@@ -25,7 +24,7 @@ export interface AppStackParamList extends ParamListBase {
   Pagination: undefined;
   CircularCarousel: undefined;
   VoiceRecord: undefined;
-  NewRecording: undefined;
+  NewRecording: {uri: string};
 };
 
 export type AppStackScreenProps<T extends keyof AppStackParamList> = StackScreenProps<AppStackParamList, T>
@@ -35,7 +34,9 @@ const Stack = createStackNavigator<AppStackParamList>();
 export const navigationRef = createNavigationContainerRef<AppStackParamList>()
 
 const AppStack = React.memo(() => (
-  <Stack.Navigator>
+  <Stack.Navigator
+    screenOptions={{headerShown: true}}
+  >
           <Stack.Screen 
             name='Home' 
             component={HomeScreen} 
@@ -78,9 +79,7 @@ const AppStack = React.memo(() => (
             component={NewRecording}
             options={{
               presentation: 'modal',
-              headerLeft: () => {
-                return <SidebarClose />
-              }
+              headerBackButtonDisplayMode: 'generic'
             }}
           />
         </Stack.Navigator>
