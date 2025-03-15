@@ -45,7 +45,7 @@ export const analyzeTextAZURE = async (text: string) => {
       });
   
       const result = await response.json();
-      console.log("Analiz Sonucu:", response);
+      console.log("Analiz Sonucu:", result);
       return result;
     } catch (error) {
       console.error("Hata:", error);
@@ -69,6 +69,71 @@ export const googlePerspectiveAPI = async(text: string) => {
         }
     })
     .then(response => response.json())
-    .then(data => console.log("google",JSON.stringify(data, null, 2)))
+    .then(data => {      
+      const value = data.attributeScores.TOXICITY.summaryScore.value * 1000
+      console.log("google",value)
+    }
+      
+    )
     .catch(error => console.error("Hata:", error));
 }
+
+export const moderateGROQapi = async (inputText: string) => {
+  const apiKey = apiKeys.GROQ
+  const url = 'https://api.groq.com/openai/v1/chat/completions';
+
+  const payload = {
+    model: 'llama3-8b-8192',
+    messages: [
+      {
+        role: 'system',
+        content: `Kurumsal şirket içi bir uygulamada paylaşılan gönderilere yapılan kullanıcı yorumlarını değerlendiren bir içerik denetleme uzmanısın. Gönderilere gelen yorumları aşağıdaki kurallara göre kategorize etmelisin:
+
+                🚫 "BLOCK" kategorisi kuralları :
+                1) Hakaret, aşağılama, küçümseme veya kişisel saldırı içeren yorumlar  
+                2) Kinaye, alay, kötü niyetli eleştiri veya sarkastik ifadeler  
+                3) Cinsellik, müstehcen içerik veya uygunsuz ifadeler  
+                4) Irk, din, cinsiyet, engellilik veya diğer kimlik temelli nefret söylemleri  
+                5) Şirket politikalarına veya çalışma ortamına zarar verebilecek ifadeler  
+                6) Spam, reklam veya alakasız içerikler  
+
+                ✅ "ALLOW" kategorisi kuralları:  
+                1) Saygılı ve yapıcı geri bildirimler  
+                2) Çalışma süreçleri, projeler veya iş akışı hakkında yapıcı tartışmalar  
+                3) Motivasyon verici, destekleyici veya bilgilendirici yorumlar  
+                4) Küçük çaplı espriler veya hafif mizah, ancak hakaret veya aşağılama içermemeli   
+
+                İlk olarak, yorumun içerdiği potansiyel sorunlu ifadeleri belirle ve bu ifadelerin engellenmesi gerekip gerekmediğini değerlendir.  
+                Yorumun ifade ettiği anlamın "BLOCK" veya "ALLOW" olduğunu düşün ve tespit et. Düşünürken ve karşılaştırma yaparken bu başlıkların yukarıda verilen tanımlarını esas al. 
+                Hangi maddeye yakın bulduğunu 1-10 arası puanla. 1 puan pek yakın değil anlamına geliyor, 10 puan ise kesinlikle bu maddedeki anlam ağır basıyor anlamına geliyor. 
+                Vereceğin örnek cevap şöyle olmalı: BLOCK madde-6 puan: 10
+                  `,
+      },
+      {
+        role: 'user',
+        content: `yorum: ${inputText}`,
+      },
+    ],
+    temperature: 0.1, 
+    max_tokens: 10,
+  };
+
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${apiKey}`,
+      },
+      body: JSON.stringify(payload),
+    });
+
+    const data = await response.json();
+    const moderationResult = data.choices[0].message.content;
+    console.log('Moderation Result:', moderationResult);
+    return moderationResult
+  } catch (error) {
+    console.error('Error calling Groq API:', error);
+    return undefined
+  }
+};

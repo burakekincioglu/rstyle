@@ -1,13 +1,14 @@
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { AudioLines } from 'lucide-react-native';
+import { AudioLines, PlayIcon } from 'lucide-react-native';
 import React, { useRef, useState } from 'react';
-import { Alert, Button, PermissionsAndroid, Platform, Pressable, StyleSheet, View } from 'react-native';
+import { Alert, PermissionsAndroid, Platform, Pressable, StyleSheet, View } from 'react-native';
 import AudioRecorderPlayer from 'react-native-audio-recorder-player';
 import { PERMISSIONS, request, RESULTS } from 'react-native-permissions';
+import { googlePerspectiveAPI } from '../api/utils';
 import { AppStackParamList } from '../AppNavigator';
 import { colors } from '../utils/colors';
-import { navigate } from '../utils/navigate';
+import { spacing } from '../utils/spacing';
 
 
 const audioRecorderPlayer = new AudioRecorderPlayer();
@@ -19,6 +20,8 @@ const VoiceRecord = () => {
   const recordRef = useRef<string | null>(null);
 
   const navigation = useNavigation<StackNavigationProp<AppStackParamList>>();
+  
+  const userComment = "bu kadar iyi olmak zorunda mısınız ??";
 
   // 📌 Mikrofon izni al
   const requestPermissions = async () => {
@@ -31,6 +34,20 @@ const VoiceRecord = () => {
     }
   };
 
+  const handleAI = async() => {
+    setRecording((prev) => !prev);
+      // await checkCommentOPENAI(userComment).then((isSafe) => {
+      //   if (isSafe) {
+      //     console.log("Yorum uygun.");
+      //   } else {
+      //     console.log("Yorum kurallara uygun değil!");
+      //   }
+      // });
+      //await analyzeTextAZURE(userComment)
+      await googlePerspectiveAPI(userComment)
+      //await moderateGROQapi(userComment)
+  }
+
   // 🎤 Ses kaydını başlat
   const startRecording = async () => {
     const hasPermission = await requestPermissions();
@@ -38,7 +55,6 @@ const VoiceRecord = () => {
       Alert.alert('İzin Gerekli', 'Mikrofon izni verilmelidir.');
       return;
     }
-
     const path = Platform.OS === 'ios' ? 'not.m4a' : `not.mp3`;
     recordRef.current = path;
 
@@ -61,7 +77,7 @@ const VoiceRecord = () => {
       if (result) {
         //  navigate({ name: 'NewRecording', params: undefined })
         //  navigation.navigate('NewRecording', {params: undefined})
-        navigate({name: 'NewRecording', params: { uri: result}})
+         //navigate({name: 'NewRecording', params: { uri: result}})
       }
     } catch (error) {
       console.error('Kayıt durdurulamadı', error);
@@ -92,8 +108,10 @@ const VoiceRecord = () => {
 
   return (
     <View style={style.container}>
-      <Button color={colors.white} title="Kaydı Oynat" onPress={playRecording} disabled={!audioPath || playing} />
-      <Pressable style={style.voiceContainer} onPress={recording ? stopRecording : startRecording} >
+      <Pressable style={{alignSelf: 'center', marginTop: spacing.xl}} onPress={playRecording} disabled={!audioPath || playing}>
+        <PlayIcon color={playing ? colors.blue : colors.white} size={40}/>
+      </Pressable>
+      <Pressable style={style.voiceContainer} onPress={handleAI} >
         <AudioLines size={40} color={recording ? colors.blue : colors.darkgray} />
       </Pressable>
     </View>
