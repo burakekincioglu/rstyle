@@ -89,7 +89,7 @@ export const moderateGROQapi = async (inputText: string) => {
         role: 'system',
         content: `Kurumsal şirket içi bir uygulamada paylaşılan gönderilere yapılan kullanıcı yorumlarını değerlendiren bir içerik denetleme uzmanısın. Gönderilere gelen yorumları aşağıdaki kurallara göre kategorize etmelisin:
 
-                🚫 "BLOCK" kategorisi kuralları :
+                🚫 "BLOCK" kategorisi kuralları:
                 1) Hakaret, aşağılama, küçümseme veya kişisel saldırı içeren yorumlar  
                 2) Alay, kötü niyetli eleştiri 
                 3) Cinsellik, müstehcen içerik veya uygunsuz ifadeler  
