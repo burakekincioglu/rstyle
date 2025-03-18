@@ -91,7 +91,7 @@ export const moderateGROQapi = async (inputText: string) => {
 
                 🚫 "BLOCK" kategorisi kuralları :
                 1) Hakaret, aşağılama, küçümseme veya kişisel saldırı içeren yorumlar  
-                2) Kinaye, alay, kötü niyetli eleştiri veya sarkastik ifadeler  
+                2) Alay, kötü niyetli eleştiri 
                 3) Cinsellik, müstehcen içerik veya uygunsuz ifadeler  
                 4) Irk, din, cinsiyet, engellilik veya diğer kimlik temelli nefret söylemleri  
                 5) Şirket politikalarına veya çalışma ortamına zarar verebilecek ifadeler  
