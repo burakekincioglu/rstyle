@@ -9,6 +9,8 @@ export const constants = {
     Leaderboard: 'Leaderboard',
     Pagination: 'Pagination',
     CircularCarousel: 'CircularCarousel',
-    VoiceRecord: 'VoiceRecord'
+    VoiceRecord: 'VoiceRecord',
+    SupaBase: 'SupaBase',
+    Skia: 'Skia'
   }
 }

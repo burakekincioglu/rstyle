@@ -11,6 +11,8 @@ import Pagination from './Screens/Pagination';
 import PagingDotsScreen from './Screens/PagingDotsScreen';
 import PangestureGame from './Screens/PangestureGame';
 import Schedule from './Screens/Schedule';
+import Skia from './Screens/Skia';
+import SupaBase from './Screens/SupaBase';
 import VoiceRecord from './Screens/VoiceRecord';
 
 export interface AppStackParamList extends ParamListBase {
@@ -25,6 +27,7 @@ export interface AppStackParamList extends ParamListBase {
   CircularCarousel: undefined;
   VoiceRecord: undefined;
   NewRecording: {uri: string};
+  SupaBase: undefined
 };
 
 export type AppStackScreenProps<T extends keyof AppStackParamList> = StackScreenProps<AppStackParamList, T>
@@ -82,6 +85,8 @@ const AppStack = React.memo(() => (
               headerBackButtonDisplayMode: 'generic'
             }}
           />
+          <Stack.Screen name='SupaBase' component={SupaBase} />
+          <Stack.Screen name='Skia' component={Skia} />
         </Stack.Navigator>
 ))
 

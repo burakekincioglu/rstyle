@@ -5,7 +5,7 @@ import React, { useRef, useState } from 'react';
 import { Alert, PermissionsAndroid, Platform, Pressable, StyleSheet, View } from 'react-native';
 import AudioRecorderPlayer from 'react-native-audio-recorder-player';
 import { PERMISSIONS, request, RESULTS } from 'react-native-permissions';
-import { googlePerspectiveAPI } from '../api/utils';
+import { analyzeTextAZURE, checkCommentOPENAI, googlePerspectiveAPI, moderateGROQapi } from '../api/utils';
 import { AppStackParamList } from '../AppNavigator';
 import { colors } from '../utils/colors';
 import { spacing } from '../utils/spacing';
@@ -21,7 +21,7 @@ const VoiceRecord = () => {
 
   const navigation = useNavigation<StackNavigationProp<AppStackParamList>>();
   
-  const userComment = "bu kadar iyi olmak zorunda mısınız ??";
+  const userComment = "babanın şarap çanağı";
 
   // 📌 Mikrofon izni al
   const requestPermissions = async () => {
@@ -36,16 +36,16 @@ const VoiceRecord = () => {
 
   const handleAI = async() => {
     setRecording((prev) => !prev);
-      // await checkCommentOPENAI(userComment).then((isSafe) => {
-      //   if (isSafe) {
-      //     console.log("Yorum uygun.");
-      //   } else {
-      //     console.log("Yorum kurallara uygun değil!");
-      //   }
-      // });
-      //await analyzeTextAZURE(userComment)
+      await checkCommentOPENAI(userComment).then((isSafe) => {
+        if (isSafe) {
+          console.log("Yorum uygun.");
+        } else {
+          console.log("Yorum kurallara uygun değil!");
+        }
+      });
+      await analyzeTextAZURE(userComment)
       await googlePerspectiveAPI(userComment)
-      //await moderateGROQapi(userComment)
+      await moderateGROQapi(userComment)
   }
 
   // 🎤 Ses kaydını başlat
