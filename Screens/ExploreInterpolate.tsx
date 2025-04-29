@@ -1,8 +1,10 @@
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable react/no-unstable-nested-components */
 import React from 'react';
-import { StyleSheet, Text } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import Animated, { interpolate, SharedValue, useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
+
+const CARD_COUNT = 4;
 
 const ExploreInterpolate = () => {
 
@@ -11,22 +13,17 @@ const ExploreInterpolate = () => {
     progress: SharedValue<number>
   }
 
-  const Card: React.FC<CardProps> = (({index, progress}) => {
+  const Card: React.FC<CardProps> = ({index, progress}) => {
 
     const rStyle = useAnimatedStyle(() => {
-
-        // const translateX = interpolate(progress.value,[0,1], [0, index * 25], Extrapolation.CLAMP)
-        const translateX = interpolate(progress.value,[0,1], [0, index * 25]);
-        const translateY = interpolate(progress.value,[0,1], [0, -index * 5]);
-        const rotate = interpolate(progress.value, [0,1], [-index * 10, index * 10]);
-        /*
-            interpolate içinde progress.value [0,1] aralığında değişirken,
-            translateX değerine [0, index * 25] dizisindeki değerleri atamasını yap.
-            Extrapolation.CLAMP prop'unu eklediğimizde bounce olayı iptal oluyor
-            çünkü ilk dizide tanımladığımız [0,1] değerlerinden büyük ve küçük olanları
-            yok sayıyor. (progress.value değerini withSpring ile değiştirdiğimizden dolayı
-            bounce efekt ile tam sayı dönmüyor progress.value)
-        */
+        // Limit the translation and rotation values to prevent cards from growing too large
+        const translateX = interpolate(progress.value, [0, 1], [0, index * 15]);
+        const translateY = interpolate(progress.value, [0, 1], [0, -index * 5]);
+        const rotate = interpolate(progress.value, [0, 1], [-index * 8, index * 8]);
+        
+        // Add scale effect - cards will grow slightly when touched
+        const scale = interpolate(progress.value, [0, 1], [1, 1.05]);
+        
         return {
             transform: [
                 {
@@ -38,21 +35,36 @@ const ExploreInterpolate = () => {
                 {
                     rotate: `${rotate}deg`,
                 },
+                {
+                    scale: scale,
+                },
             ],
         };
+    });
 
+    // Text visibility animation
+    const textStyle = useAnimatedStyle(() => {
+        // Start with opacity 0 (invisible) and increase to 1 (visible)
+        const opacity = interpolate(progress.value, [0, 1], [0, 1]);
+        
+        return {
+            opacity: opacity,
+        };
     });
 
     return(
         <Animated.View
             key={index}
-            style={[styles.card, rStyle, {zIndex: -index, backgroundColor: index % 2 === 0 ? '#fe3d6d' : 'white'}]}
+            style={[styles.card, rStyle, {zIndex: CARD_COUNT - index, backgroundColor: index % 2 === 0 ? '#fe3d6d' : 'white'}]}
         >
-            {index === 0 && <Text style={styles.text} >Tıkla ve Gör</Text>}
+            {index === 0 && (
+                <View style={styles.textContainer}>
+                    <Animated.Text style={[styles.text, textStyle]}>Tıkla ve Gör</Animated.Text>
+                </View>
+            )}
         </Animated.View>
     );
-
-  });
+  };
 
   const progress = useSharedValue(0);
 
@@ -65,13 +77,12 @@ const ExploreInterpolate = () => {
         progress.value = withSpring(0);
     }}
     >
-      {new Array(4).fill(0).map((_, index) =>
+      {new Array(CARD_COUNT).fill(0).map((_, index) =>
         <Card key={index} index={index} progress={progress} />
       )}
     </Animated.View>
   );
 };
-// `${-index * 10}deg`
 
 export default ExploreInterpolate;
 
@@ -82,8 +93,9 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
     },
-    card: {height: 180,
-        width: 120,
+    card: {
+        height: 220,
+        width: 150,
         backgroundColor: 'white',
         borderRadius: 25,
         shadowColor: '#cccccc',
@@ -96,8 +108,16 @@ const styles = StyleSheet.create({
         position: 'absolute',
         alignItems: 'center',
         justifyContent: 'center',
+        overflow: 'hidden', // Prevent content from overflowing
+    },
+    textContainer: {
+        position: 'relative',
+        alignItems: 'center',
+        justifyContent: 'center',
     },
     text: {
         fontWeight: 'bold',
+        fontSize: 16,
+        color: 'black',
     },
 });
