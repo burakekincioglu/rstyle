@@ -15,12 +15,13 @@ const HomeScreen = () => {
                 return null
             }else{
                 return(
-                    <Button
-                        key={index}
-                        title={key}
-                        color={'gray'} 
-                        onPress={() => navigation.navigate(value)}
-                    />
+                    <View key={index} style={{ marginLeft: 10 }}>
+                        <Button
+                            title={value}
+                            color="black"
+                            onPress={() => navigation.navigate(key as never)}
+                        />
+                    </View>
                 )
             }
         })}
@@ -31,5 +32,5 @@ const HomeScreen = () => {
 export default HomeScreen
 
 const styles = StyleSheet.create({
-    container: {justifyContent: "center", alignItems: "center"}
+    container: {flex: 1, alignItems: "flex-start", marginTop: 20}
 })

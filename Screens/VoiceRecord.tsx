@@ -8,6 +8,7 @@ import { PERMISSIONS, request, RESULTS } from 'react-native-permissions';
 import { analyzeTextAZURE, checkCommentOPENAI, googlePerspectiveAPI, moderateGROQapi } from '../api/utils';
 import { AppStackParamList } from '../AppNavigator';
 import { colors } from '../utils/colors';
+import { navigate } from '../utils/navigate';
 import { spacing } from '../utils/spacing';
 
 
@@ -77,7 +78,7 @@ const VoiceRecord = () => {
       if (result) {
         //  navigate({ name: 'NewRecording', params: undefined })
         //  navigation.navigate('NewRecording', {params: undefined})
-         //navigate({name: 'NewRecording', params: { uri: result}})
+         navigate({name: 'NewRecording', params: { uri: result}})
       }
     } catch (error) {
       console.error('Kayıt durdurulamadı', error);
@@ -111,7 +112,7 @@ const VoiceRecord = () => {
       <Pressable style={{alignSelf: 'center', marginTop: spacing.xl}} onPress={playRecording} disabled={!audioPath || playing}>
         <PlayIcon color={playing ? colors.blue : colors.white} size={40}/>
       </Pressable>
-      <Pressable style={style.voiceContainer} onPress={handleAI} >
+      <Pressable style={style.voiceContainer} onPress={recording ? stopRecording : startRecording} >
         <AudioLines size={40} color={recording ? colors.blue : colors.darkgray} />
       </Pressable>
     </View>

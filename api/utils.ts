@@ -78,7 +78,7 @@ export const googlePerspectiveAPI = async(text: string) => {
     .catch(error => console.error("Hata:", error));
 }
 
-export const moderateGROQapi = async (inputText: string) => {
+export const moderateGROQapi = async (inputText: string, rules?: string) => {
   const apiKey = apiKeys.GROQ
   const url = 'https://api.groq.com/openai/v1/chat/completions';
 
@@ -87,7 +87,7 @@ export const moderateGROQapi = async (inputText: string) => {
     messages: [
       {
         role: 'system',
-        content: `Kurumsal şirket içi bir uygulamada paylaşılan gönderilere yapılan kullanıcı yorumlarını değerlendiren bir içerik denetleme uzmanısın. Gönderilere gelen yorumları aşağıdaki kurallara göre kategorize etmelisin:
+        content: rules ?? `Kurumsal şirket içi bir uygulamada paylaşılan gönderilere yapılan kullanıcı yorumlarını değerlendiren bir içerik denetleme uzmanısın. Gönderilere gelen yorumları aşağıdaki kurallara göre kategorize etmelisin:
 
                 🚫 "BLOCK" kategorisi kuralları:
                 1) Hakaret, aşağılama, küçümseme veya kişisel saldırı içeren yorumlar  

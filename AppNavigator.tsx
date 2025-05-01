@@ -5,6 +5,8 @@ import CircularCarousel from './Screens/CircularCarousel';
 import DoubleTapLikeGesture from './Screens/DoubleTapLikeGesture';
 import ExploreInterpolate from './Screens/ExploreInterpolate';
 import HomeScreen from './Screens/Home';
+import InfiniteScroll from './Screens/InfiniteScroll/InfiniteScroll';
+import ProductDetails from './Screens/InfiniteScroll/ProductDetails';
 import Leaderboard from './Screens/Leaderboard';
 import NewRecording from './Screens/NewRecording';
 import Pagination from './Screens/Pagination';
@@ -27,7 +29,8 @@ export interface AppStackParamList extends ParamListBase {
   CircularCarousel: undefined;
   VoiceRecord: undefined;
   NewRecording: {uri: string};
-  SupaBase: undefined
+  SupaBase: undefined;
+  ProductDetails: { productId: string };
 };
 
 export type AppStackScreenProps<T extends keyof AppStackParamList> = StackScreenProps<AppStackParamList, T>
@@ -44,7 +47,8 @@ const AppStack = React.memo(() => (
             name='Home' 
             component={HomeScreen} 
             options={{
-              headerStyle: {backgroundColor: '#f4511e'}
+              headerStyle: {backgroundColor: '#f4511e'},
+              title: '📱',
             }}
           />
           <Stack.Screen 
@@ -87,6 +91,24 @@ const AppStack = React.memo(() => (
           />
           <Stack.Screen name='SupaBase' component={SupaBase} />
           <Stack.Screen name='Skia' component={Skia} />
+          <Stack.Screen 
+            name='InfiniteScroll' 
+            options={{
+              headerTitleAlign: 'left',
+              headerMode: 'screen',
+              headerTitle: 'Infinite Scroll',
+              headerTransparent: true
+            }} 
+            component={InfiniteScroll} 
+          />
+          <Stack.Screen 
+            name='ProductDetails' 
+            component={ProductDetails} 
+            options={{
+              presentation: 'modal',
+              headerBackButtonDisplayMode: 'generic'
+            }}
+          />
         </Stack.Navigator>
 ))
 
