@@ -1,12 +1,19 @@
-import React, { useState } from "react";
+import { useNavigation } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
+import React, { useEffect, useState } from "react";
 import { Image, ImageSourcePropType, StyleSheet, View } from "react-native";
 import Animated, {
     FadeIn,
+    interpolate,
     LinearTransition,
     SlideInLeft,
     SlideInRight,
+    useAnimatedRef,
+    useAnimatedStyle,
+    useScrollViewOffset,
 } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { AppStackParamList } from "../AppNavigator";
 
 const gap = 10;
 
@@ -77,7 +84,41 @@ const HeadText = (props: HeadTextProps) => {
 
 export default function WelcomeScreen() {
   const { top, bottom } = useSafeAreaInsets();
+  const ref = useAnimatedRef<Animated.ScrollView>();
+  const scroll = useScrollViewOffset(ref);
+  const navigation = useNavigation<StackNavigationProp<AppStackParamList>>();
+  const headerStyle = useAnimatedStyle(
+    () => ({
+      transform: [
+        { translateY: interpolate(scroll.value, [0, 100], [50, 0], "clamp") },
+      ],
+    }),
+    []
+  );
+
+  useEffect(() => {
+    navigation.setOptions({
+      headerTitle() {
+        return (
+          <View
+            style={{
+              overflow: "hidden",
+              paddingBottom: 9,
+              marginBottom: -9,
+            }}
+          >
+            <Animated.View style={headerStyle}>
+              <Animated.Text>Welcome Screen 🎯</Animated.Text>
+            </Animated.View>
+          </View>
+        );
+      },
+    });
+  }, [scroll]);
+
+
   return (
+    <Animated.ScrollView ref={ref}>
     <View
       style={[styles.container, { paddingTop: top, paddingBottom: bottom }]}
     >
@@ -100,6 +141,7 @@ export default function WelcomeScreen() {
         <HeadText side="right" image={require("../assets/images/four.jpg")} />
       </View>
     </View>
+    </Animated.ScrollView>
   );
 }
 
