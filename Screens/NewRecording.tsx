@@ -39,7 +39,8 @@ const NewRecording = (props: NewRecordingProps) => {
       VoiceRecord: '🎙️ VoiceRecord', // Ses kaydı, voice record örnekleri içerir, ses kaydı, örnekleri içerir
       SupaBase: '💾 SupaBase', // Supabase, supabase örnekleri içerir, supabase, örnekleri içerir
       Skia: '🎨 Skia', // Skia, skia örnekleri içerir, skia, örnekleri içerir
-      InfiniteScroll: '♾️ InfiniteScroll' // empty
+      InfiniteScroll: '♾️ InfiniteScroll', // empty
+      WelcomeScreen: '✨ WelcomeScreen' // hareketli giriş, neşeli karşılama, bahar mevsimi, yaz mevsimi, hoşgeldiniz
 
     Örneğin kullanıcı yeşil görmek istiyorum dediğinde ona cevap olarak "Pagination" ifadesini dönmelisin. Çünkü "Pagination" 
     sayfa açıklamasında "yeşil noktalar" ifadesi var. Cevabında sadece sayfa ismi olsun. Tek kelimelik cevap vermesni istiyorum.

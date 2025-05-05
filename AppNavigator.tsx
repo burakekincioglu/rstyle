@@ -16,6 +16,7 @@ import Schedule from './Screens/Schedule';
 import Skia from './Screens/Skia';
 import SupaBase from './Screens/SupaBase';
 import VoiceRecord from './Screens/VoiceRecord';
+import WelcomeScreen from './Screens/WelcomeScreen';
 
 export interface AppStackParamList extends ParamListBase {
   Home: undefined;
@@ -109,6 +110,7 @@ const AppStack = React.memo(() => (
               headerBackButtonDisplayMode: 'generic'
             }}
           />
+          <Stack.Screen name='WelcomeScreen' component={WelcomeScreen} />
         </Stack.Navigator>
 ))
 
