@@ -3,6 +3,7 @@ import { createStackNavigator, type StackScreenProps } from '@react-navigation/s
 import React, { useRef } from 'react';
 import CircularCarousel from './Screens/CircularCarousel';
 import DoubleTapLikeGesture from './Screens/DoubleTapLikeGesture';
+import ModalUsage from './Screens/ExampleModalUsage';
 import ExploreInterpolate from './Screens/ExploreInterpolate';
 import HomeScreen from './Screens/Home';
 import InfiniteScroll from './Screens/InfiniteScroll/InfiniteScroll';
@@ -32,6 +33,7 @@ export interface AppStackParamList extends ParamListBase {
   NewRecording: {uri: string};
   SupaBase: undefined;
   ProductDetails: { productId: string };
+  ModalUsage: undefined;
 };
 
 export type AppStackScreenProps<T extends keyof AppStackParamList> = StackScreenProps<AppStackParamList, T>
@@ -111,6 +113,13 @@ const AppStack = React.memo(() => (
             }}
           />
           <Stack.Screen name='WelcomeScreen' component={WelcomeScreen} />
+          <Stack.Screen 
+            name='ModalUsage' 
+            component={ModalUsage}
+            options={{
+              title: 'Modal Example'
+            }}
+          />
         </Stack.Navigator>
 ))
 
