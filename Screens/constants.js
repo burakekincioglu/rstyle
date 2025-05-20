@@ -13,6 +13,7 @@ export const constants = {
     SupaBase: '💾 SupaBase', // Supabase, supabase örnekleri içerir, supabase, örnekleri içerir
     Skia: '🎨 Skia', // Skia, skia örnekleri içerir, skia, örnekleri içerir
     InfiniteScroll: '♾️ InfiniteScroll', // empty
-    WelcomeScreen: '✨ WelcomeScreen' // hareketli giriş, neşeli karşılama, bahar mevsimi, yaz mevsimi, hoşgeldiniz
+    WelcomeScreen: '✨ WelcomeScreen', // hareketli giriş, neşeli karşılama, bahar mevsimi, yaz mevsimi, hoşgeldiniz
+    ModalUsage: '🎯 Modal Example' // Modal örneği
   }
 }
